@@ -67,11 +67,26 @@ def print_step(title: str, body: str | None = None) -> None:
     print()
 
 
+def sync_openai_key_aliases() -> None:
+    """
+    LiteLLM expects OPENAI_API_KEY. Hugging Face secret names must match
+    /^[a-zA-Z][_a-zA-Z0-9]*$/ (no hyphens/spaces). Mirror common Space names.
+    """
+    if os.environ.get("OPENAI_API_KEY"):
+        return
+    for name in ("openai_api_key", "OPENAI_KEY", "OpenAIApiKey"):
+        val = os.environ.get(name)
+        if val:
+            os.environ["OPENAI_API_KEY"] = val
+            return
+
+
 def load_env() -> Path:
     from dotenv import load_dotenv
 
     env_file = Path(__file__).resolve().parent / ".env"
     load_dotenv(env_file)
+    sync_openai_key_aliases()
     return env_file
 
 

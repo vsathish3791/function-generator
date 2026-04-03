@@ -1,7 +1,7 @@
 """
 Streamlit UI for function_generator — deploy on Hugging Face Spaces (sdk: streamlit).
 
-Set OPENAI_API_KEY in Space Settings → Repository secrets (or use .env locally).
+Set API key via HF Variables and secrets, or local .env (see UI messages).
 """
 
 from __future__ import annotations
@@ -18,6 +18,17 @@ import streamlit as st
 from function_generator import get_model, load_env, run_pipeline
 
 
+def _mirror_hf_openai_secrets_to_litellm() -> None:
+    """HF Secrets may use openai_api_key; LiteLLM expects OPENAI_API_KEY."""
+    if os.environ.get("OPENAI_API_KEY"):
+        return
+    for name in ("openai_api_key", "OPENAI_KEY", "OpenAIApiKey"):
+        val = os.environ.get(name)
+        if val:
+            os.environ["OPENAI_API_KEY"] = val
+            return
+
+
 def main() -> None:
     st.set_page_config(
         page_title="Function generator",
@@ -26,6 +37,7 @@ def main() -> None:
     )
 
     load_env()
+    _mirror_hf_openai_secrets_to_litellm()
 
     st.title("Python function generator")
     st.caption(
@@ -34,10 +46,22 @@ def main() -> None:
 
     if not os.environ.get("OPENAI_API_KEY"):
         st.error(
-            "**Missing OPENAI_API_KEY.**\n\n"
-            "- **Hugging Face:** open this Space → **Settings** → **Repository secrets** → "
-            "add a secret named `OPENAI_API_KEY` with your key.\n"
-            "- **Local:** create a `.env` file next to `app.py` with `OPENAI_API_KEY=sk-...`"
+            "**Missing `OPENAI_API_KEY` in the running app**\n\n"
+            "The server process does not see your key. Fix it on **Hugging Face**, then **rebuild / restart** the Space."
+        )
+        with st.expander("Checklist (Hugging Face)"):
+            st.markdown(
+                """
+1. **Settings → Variables and secrets** (not the old “Repository secrets” label in older docs).
+2. Under **Secrets**, add **one** secret: **Name** `openai_api_key` — **Value** = your full `sk-...` key only.  
+   Do **not** add the same name again under **Variables** (that causes *collision* errors).
+3. **Factory reboot** or push a new commit so the container **restarts** after saving the secret.
+4. Confirm this Space is running **current** code from GitHub (with `sync_openai_key_aliases` in `function_generator.py`).  
+   If the UI still shows an old message about “Repository secrets”, redeploy from `main`.
+                """
+            )
+        st.info(
+            "**Local run:** copy `.env.example` to `.env` and set `OPENAI_API_KEY=sk-...` next to `app.py`."
         )
         st.stop()
 

@@ -50,11 +50,12 @@ Adjust `title`, `emoji`, and colors as you like.
 
 **Never commit your key.**
 
-1. Open the Space → **Settings** → **Repository secrets** (or **Variables and secrets**).
-2. Add **`OPENAI_API_KEY`** with your OpenAI (or compatible) API key value.
-3. Optional: add **`LITELLM_MODEL`** (e.g. `gpt-4o-mini`) if you want a default other than the app’s text field.
+1. Open the Space → **Settings** → **Variables and secrets** → **Secrets**.
+2. **Name** must match Hugging Face rules: letters, numbers, underscores only, and start with a letter (e.g. `openai_api_key` or `OPENAI_API_KEY`). **Do not** use hyphens (e.g. `OPENAI-API-KEY` is invalid). Put your **`sk-...`** string only in **Value**.
+3. This app sets **`OPENAI_API_KEY`** for LiteLLM; if you named the secret **`openai_api_key`**, it is copied automatically.
+4. Optional: **`LITELLM_MODEL`** (e.g. `gpt-4o-mini`).
 
-The app reads these as normal environment variables (`load_dotenv` still loads `.env` locally only).
+The app reads these as environment variables (`load_dotenv` loads `.env` locally only).
 
 ## 5. Run locally (same UI)
 
