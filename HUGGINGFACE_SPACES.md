@@ -2,24 +2,28 @@
 
 This project includes **`app.py`**, a [Streamlit](https://streamlit.io/) UI around `function_generator.run_pipeline`. You can host it for free (limits apply) on [Hugging Face Spaces](https://huggingface.co/spaces).
 
-## 1. Push the project to GitHub or Hugging Face
+> **Important (2025+):** Hugging Face **removed the built-in “Streamlit” SDK** from the new-Space form. New Streamlit apps must use the **Docker** SDK. This repo includes a **`Dockerfile`** for that.
 
-Include at least:
+## 1. Files to include
 
-- `app.py`
-- `function_generator.py`
-- `requirements.txt` (must list `litellm` and `streamlit`)
+| File | Purpose |
+|------|--------|
+| `Dockerfile` | Runs Streamlit on port **8501** |
+| `requirements.txt` | `litellm` + `streamlit` |
+| `app.py` | Streamlit UI |
+| `function_generator.py` | Generator logic |
 
-## 2. Create a new Space
+Optional: `README.md` with the YAML block below (first lines of the file).
+
+## 2. Create a new Space (Docker)
 
 1. Open [https://huggingface.co/new-space](https://huggingface.co/new-space)
-2. Link your Git repository **or** upload files.
-3. Choose **SDK: Streamlit** (or start blank and add the README card below).
-4. **App file:** `app.py`
+2. Choose **SDK: Docker** (not Streamlit — it may no longer appear).
+3. Create the Space, then upload **`Dockerfile`**, **`requirements.txt`**, **`app.py`**, **`function_generator.py`** (or push from Git).
 
 ## 3. README card (Space metadata)
 
-Hugging Face reads the **top of `README.md`** in the Space repo. Either merge this into your existing README **or** use a Space-only repo whose `README.md` starts like this:
+Put this at the **very top** of **`README.md`** in the Space repository (commit before/after upload):
 
 ```markdown
 ---
@@ -27,17 +31,18 @@ title: Python function generator
 emoji: 🐍
 colorFrom: gray
 colorTo: green
-sdk: streamlit
-sdk_version: 1.31.0
-app_file: app.py
+sdk: docker
+app_port: 8501
 pinned: false
 license: mit
 ---
 
 # Python function generator
 
-LiteLLM-powered 3-step generator (code → docs → tests). Set `OPENAI_API_KEY` in **Space Settings → Repository secrets**.
+Set **`OPENAI_API_KEY`** in **Space Settings → Variables and secrets**.
 ```
+
+`app_port: 8501` is required so Hugging Face proxies traffic to Streamlit.
 
 Adjust `title`, `emoji`, and colors as you like.
 

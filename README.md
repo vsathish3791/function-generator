@@ -169,6 +169,7 @@ python -m unittest my_output -v
 |------|------|
 | `function_generator.py` | CLI: requirements → LLM → saved Python file |
 | `app.py` | Streamlit UI (optional; same pipeline as CLI) |
+| `Dockerfile` | Hugging Face Spaces (Docker + Streamlit on port 8501) |
 | `requirements.txt` | pip: `litellm`, `streamlit`, etc. |
 | `.env` | Your `OPENAI_API_KEY` (local only) |
 | `my_output.py` / `generated_function_*.py` | Generated results |
@@ -186,9 +187,9 @@ Open the URL shown (usually `http://localhost:8501`). Set `OPENAI_API_KEY` in `.
 
 ---
 
-## Hugging Face Spaces (Streamlit)
+## Hugging Face Spaces (Streamlit via Docker)
 
-Deploy the browser UI so you can use it from another machine: see **[HUGGINGFACE_SPACES.md](HUGGINGFACE_SPACES.md)** for creating a Space, README card YAML, and **Repository secrets** for `OPENAI_API_KEY`.
+Hugging Face no longer offers a built-in **Streamlit** SDK on the new-Space form; use **Docker** instead. This repo includes a **`Dockerfile`**. Full steps, **`README.md` YAML** (`sdk: docker`, `app_port: 8501`), and secrets: **[HUGGINGFACE_SPACES.md](HUGGINGFACE_SPACES.md)**.
 
 ---
 
